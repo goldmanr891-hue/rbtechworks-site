@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Computer repair, custom PC builds and small-business IT support with flat, up-front pricing.">
+<title>RB Tech Works</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: workbench sheet — left-aligned sections, price lists as parts-bin rows with mono prices, plans as a spec table. Palette from a circuit board: solder-mask green + copper on cool ESD-mat grey. */
+:root {
+  --bg: #eef1f2;
+  --surface: #ffffff;
+  --ink: #15211d;
+  --muted: #56645f;
+  --line: #d3dad7;
+  --green: #1d6b4a;
+  --green-soft: #dcebe3;
+  --copper: #a8602b;
+  --display: "Archivo", "Arial Narrow", system-ui, sans-serif;
+  --body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1513; --surface: #161e1b; --ink: #e4ebe8; --muted: #98a7a1;
+    --line: #2a3632; --green: #5cc796; --green-soft: #1b3229; --copper: #e0965c;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f1513; --surface: #161e1b; --ink: #e4ebe8; --muted: #98a7a1;
+  --line: #2a3632; --green: #5cc796; --green-soft: #1b3229; --copper: #e0965c;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink);
+  font: 16px/1.6 var(--body);
+  padding: 0 20px;
+}
+.wrap { max-width: 1040px; margin: 0 auto; }
+a { color: var(--green); }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--copper); outline-offset: 3px; border-radius: 3px; }
+h1, h2, h3 { font-family: var(--display); font-stretch: 112%; line-height: 1.1; text-wrap: balance; margin: 0; }
+p { margin: 0; }
+.mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+
+/* Header */
+header.top {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10;
+  background: var(--bg); border-bottom: 1px solid var(--line);
+  margin: 0 -20px; padding: 0 20px;
+}
+header.top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding-block: 12px; }
+.brand { font-family: var(--display); font-weight: 800; font-stretch: 118%; font-size: 1.15rem; letter-spacing: -0.01em; color: var(--ink); text-decoration: none; display: flex; align-items: center; gap: 10px; }
+.brand svg { flex: none; }
+nav { display: flex; gap: 4px 18px; flex-wrap: wrap; font-size: 0.9rem; }
+nav a { color: var(--muted); text-decoration: none; font-weight: 500; }
+nav a:hover { color: var(--ink); }
+
+/* Hero */
+.hero { display: grid; grid-template-columns: 1.25fr 1fr; gap: 48px; align-items: center; padding-block: 64px 56px; }
+.hero > * { min-width: 0; }
+.eyebrow { font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--copper); margin-bottom: 14px; }
+.hero h1 { font-size: clamp(2.2rem, 5vw, 3.6rem); font-weight: 850; letter-spacing: -0.02em; }
+.hero h1 em { font-style: normal; color: var(--green); }
+.hero .lead { margin-top: 20px; font-size: 1.12rem; color: var(--muted); max-width: 34em; }
+.cta-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 28px; }
+.btn { display: inline-block; padding: 12px 20px; border-radius: 6px; font-weight: 600; text-decoration: none; font-size: 0.95rem; }
+.btn.primary { background: var(--green); color: var(--surface); }
+.btn.ghost { border: 1px solid var(--line); color: var(--ink); background: var(--surface); }
+
+/* Repair ticket */
+.ticket { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 22px 22px 18px; position: relative; box-shadow: 0 1px 0 var(--line), 0 12px 32px -18px rgba(0,0,0,.25); }
+.ticket::before, .ticket::after { content: ""; position: absolute; top: 58px; width: 16px; height: 16px; border-radius: 50%; background: var(--bg); border: 1px solid var(--line); }
+.ticket::before { left: -9px; } .ticket::after { right: -9px; }
+.ticket-head { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 0.78rem; color: var(--muted); letter-spacing: 0.05em; text-transform: uppercase; padding-bottom: 16px; border-bottom: 1px dashed var(--line); margin-bottom: 14px; }
+.ticket ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.ticket li { display: flex; gap: 10px; align-items: baseline; font-size: 0.95rem; }
+.ticket li .k { font-family: var(--mono); color: var(--green); font-weight: 600; flex: none; width: 1.2em; }
+.ticket .stamp { margin-top: 16px; display: inline-block; font-family: var(--mono); font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--copper); border: 1.5px solid var(--copper); border-radius: 4px; padding: 3px 8px; transform: rotate(-2deg); }
+
+/* Sections */
+section.block { padding-block: 56px; border-top: 1px solid var(--line); }
+.sec-head { display: grid; grid-template-columns: 1fr 1.4fr; gap: 16px 48px; margin-bottom: 32px; align-items: end; }
+.sec-head > * { min-width: 0; }
+.sec-head h2 { font-size: clamp(1.7rem, 3.4vw, 2.4rem); font-weight: 800; }
+.sec-head p { color: var(--muted); max-width: 38em; }
+
+/* Price rows */
+.prices { display: grid; grid-template-columns: 1fr 1fr; gap: 0 48px; }
+.row { display: grid; grid-template-columns: 1fr auto; gap: 2px 16px; padding: 14px 0; border-bottom: 1px solid var(--line); }
+.row .name { font-weight: 600; }
+.row .price { font-family: var(--mono); font-weight: 600; font-variant-numeric: tabular-nums; color: var(--ink); text-align: right; white-space: nowrap; }
+.row .desc { grid-column: 1 / -1; color: var(--muted); font-size: 0.9rem; }
+.note { margin-top: 20px; font-size: 0.9rem; color: var(--muted); }
+
+/* Builds */
+.builds { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.build { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 20px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.build.feature { border-color: var(--green); box-shadow: inset 0 0 0 1px var(--green); }
+.build h3 { font-size: 1.2rem; font-weight: 750; }
+.build .fee { font-family: var(--mono); font-size: 1.6rem; font-weight: 600; }
+.build .fee small { font-size: 0.8rem; color: var(--muted); font-weight: 400; }
+.build .budget { font-family: var(--mono); font-size: 0.82rem; color: var(--copper); }
+.build p { color: var(--muted); font-size: 0.92rem; }
+.includes { margin-top: 24px; display: grid; grid-template-columns: 1.3fr 1fr; gap: 24px 48px; }
+.includes > * { min-width: 0; }
+.includes h3 { font-size: 1rem; font-weight: 700; margin-bottom: 10px; font-stretch: 100%; }
+.includes ul { margin: 0; padding-left: 1.1em; color: var(--muted); font-size: 0.95rem; display: grid; gap: 4px; }
+.includes .row { padding: 10px 0; }
+
+/* Business */
+.biz { display: grid; grid-template-columns: 1fr 1.6fr; gap: 48px; }
+.biz > * { min-width: 0; }
+.biz h3 { font-size: 1rem; font-weight: 700; font-stretch: 100%; margin-bottom: 4px; }
+.rate-card { background: var(--green-soft); border-radius: 8px; padding: 20px; }
+.rate-card .row { border-color: color-mix(in srgb, var(--green) 25%, transparent); }
+.rate-card .row:last-child { border-bottom: 0; }
+
+/* Plans table */
+.plans-scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+table.plans { width: 100%; border-collapse: collapse; min-width: 640px; font-size: 0.93rem; }
+.plans th, .plans td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--line); vertical-align: top; }
+.plans tbody tr:last-child td, .plans tbody tr:last-child th { border-bottom: 0; }
+.plans thead th { font-family: var(--display); font-stretch: 110%; font-size: 1.15rem; font-weight: 750; padding-top: 20px; }
+.plans thead th.feature { color: var(--green); }
+.plans thead .per { display: block; font-family: var(--mono); font-size: 1.5rem; font-weight: 600; font-stretch: 100%; color: var(--ink); margin-top: 6px; }
+.plans thead .per small { font-size: 0.75rem; color: var(--muted); font-weight: 400; }
+.plans tbody th { font-weight: 500; color: var(--muted); width: 30%; }
+.plans td.feature, .plans th.feature { background: color-mix(in srgb, var(--green-soft) 60%, transparent); }
+.yes { color: var(--green); font-weight: 600; }
+.no { color: var(--muted); }
+.addons { margin-top: 20px; display: flex; flex-wrap: wrap; gap: 8px 24px; font-size: 0.9rem; color: var(--muted); }
+.addons span b { font-family: var(--mono); color: var(--ink); font-weight: 600; }
+
+/* Terms */
+.terms { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px 48px; }
+.terms div { min-width: 0; }
+.terms h3 { font-size: 0.95rem; font-weight: 700; font-stretch: 100%; margin-bottom: 4px; }
+.terms p { color: var(--muted); font-size: 0.93rem; }
+
+/* Contact */
+.contact { display: grid; grid-template-columns: 1fr 1fr; gap: 32px 48px; align-items: start; }
+.contact > * { min-width: 0; }
+.contact-card { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 20px; }
+.contact-card .row .price { font-weight: 500; user-select: all; }
+footer { padding-block: 32px 48px; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.85rem; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+
+@media (max-width: 860px) {
+  .hero, .sec-head, .biz, .contact, .includes { grid-template-columns: 1fr; }
+  .hero { gap: 36px; padding-block: 40px; }
+  .builds { grid-template-columns: repeat(2, 1fr); }
+  .prices, .terms { grid-template-columns: 1fr; }
+}
+@media (max-width: 480px) {
+  .builds { grid-template-columns: 1fr; }
+  nav { font-size: 0.85rem; gap: 4px 14px; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .btn { transition: transform .15s ease; }
+  .btn:hover { transform: translateY(-1px); }
+}
+</style>
+<style>body{margin:0}img{max-width:100%}</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#top">
+      <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><rect x="1" y="1" width="24" height="24" rx="5" fill="var(--green)"/><path d="M7 9h6m0 0v8m0-8 6-0M13 17h6" stroke="var(--surface)" stroke-width="2" fill="none" stroke-linecap="round"/><circle cx="7" cy="9" r="2" fill="var(--copper)"/><circle cx="19" cy="9" r="2" fill="var(--surface)"/><circle cx="19" cy="17" r="2" fill="var(--surface)"/></svg>
+      RB Tech Works
+    </a>
+    <nav aria-label="Sections">
+      <a href="#home">Home</a>
+      <a href="#builds">PC builds</a>
+      <a href="#business">Business</a>
+      <a href="#managed">Managed IT</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap" id="top">
+  <div class="hero">
+    <div>
+      <p class="eyebrow">Computer repair · Custom builds · Small-business IT</p>
+      <h1>Fixed right, priced <em>up front.</em></h1>
+      <p class="lead">Repairs and upgrades for home computers, custom PCs built to order, and IT support for offices of 1–50 people. Common jobs have flat prices. Anything else gets a quote before work starts.</p>
+      <div class="cta-row">
+        <a class="btn primary" href="#contact">Book a diagnostic</a>
+        <a class="btn ghost" href="#managed">See business plans</a>
+      </div>
+    </div>
+    <aside class="ticket" aria-label="How a repair works">
+      <div class="ticket-head"><span>Repair ticket</span><span class="mono">No. 0001</span></div>
+      <ul>
+        <li><span class="k">1</span><span><b>$79 diagnostic</b>, waived if you approve the repair</span></li>
+        <li><span class="k">2</span><span>Flat-rate quote before any work starts</span></li>
+        <li><span class="k">3</span><span>Most repairs done in 2–4 business days</span></li>
+        <li><span class="k">4</span><span>90-day labor warranty on every job</span></li>
+      </ul>
+      <span class="stamp">No fix, no fee</span>
+    </aside>
+  </div>
+
+  <section class="block" id="home">
+    <div class="sec-head">
+      <h2>Home repair &amp; setup</h2>
+      <p>Flat rates for laptops, desktops and home networks. Work not listed is $95/hr, billed in 30-minute increments. Parts are billed at cost plus 15%, or you can bring your own.</p>
+    </div>
+    <div class="prices">
+      <div class="row"><span class="name">Tune-up</span><span class="price">$99</span><span class="desc">Cleanup, startup optimization, updates, drive and battery health check</span></div>
+      <div class="row"><span class="name">Virus &amp; malware removal</span><span class="price">$129</span><span class="desc">Full scan and removal, browser cleanup, security software setup</span></div>
+      <div class="row"><span class="name">Windows reinstall</span><span class="price">$129</span><span class="desc">Clean install, drivers and updates, your files backed up and restored</span></div>
+      <div class="row"><span class="name">Data transfer to a new PC</span><span class="price">$119</span><span class="desc">Files, bookmarks and email setup, up to 500 GB</span></div>
+      <div class="row"><span class="name">Data recovery</span><span class="price">$149</span><span class="desc">Deleted files and corrupted drives that still spin up. Failed drives are quoted separately.</span></div>
+      <div class="row"><span class="name">New computer setup</span><span class="price">$79</span><span class="desc">Unboxing, updates, accounts, bloatware removed, basics transferred</span></div>
+      <div class="row"><span class="name">SSD upgrade</span><span class="price">$99 + parts</span><span class="desc">Old drive cloned to the new SSD, so everything works as before</span></div>
+      <div class="row"><span class="name">RAM upgrade</span><span class="price">$49 + parts</span><span class="desc">Installed and tested</span></div>
+      <div class="row"><span class="name">Laptop screen replacement</span><span class="price">$99 + parts</span><span class="desc">Most models, quoted after we look up yours</span></div>
+      <div class="row"><span class="name">Keyboard, battery or charging port</span><span class="price">$89 + parts</span><span class="desc">Most laptop models</span></div>
+      <div class="row"><span class="name">Home Wi-Fi setup or dead-zone fix</span><span class="price">$129</span><span class="desc">Router or mesh setup, secure password, every device connected</span></div>
+      <div class="row"><span class="name">Printer setup</span><span class="price">$69</span><span class="desc">Connected to Wi-Fi and every device in the house</span></div>
+      <div class="row"><span class="name">Smart home &amp; TV setup</span><span class="price">$95/hr</span><span class="desc">Cameras, doorbells, smart TVs, streaming devices</span></div>
+      <div class="row"><span class="name">Remote help session</span><span class="price">$49</span><span class="desc">Up to 30 minutes for quick fixes and how-to questions</span></div>
+    </div>
+    <p class="note">On-site visits add a $49 trip fee within 20 miles. Remote sessions have no trip fee.</p>
+  </section>
+
+  <section class="block" id="builds">
+    <div class="sec-head">
+      <h2>Custom PC builds</h2>
+      <p>You pay a flat build fee, and parts are billed at cost with receipts shown. You get help choosing parts, or bring a list of your own.</p>
+    </div>
+    <div class="builds">
+      <div class="build">
+        <h3>Essentials</h3>
+        <span class="fee">$149 <small>build fee</small></span>
+        <span class="budget">Parts ≈ $500–800</span>
+        <p>Home office, school and everyday use</p>
+      </div>
+      <div class="build feature">
+        <h3>Gaming</h3>
+        <span class="fee">$199 <small>build fee</small></span>
+        <span class="budget">Parts ≈ $1,000–2,000</span>
+        <p>1080p–1440p high-refresh gaming and streaming</p>
+      </div>
+      <div class="build">
+        <h3>Creator / Workstation</h3>
+        <span class="fee">$249 <small>build fee</small></span>
+        <span class="budget">Parts ≈ $2,000+</span>
+        <p>Video editing, 3D, CAD and local AI</p>
+      </div>
+      <div class="build">
+        <h3>Bring your own parts</h3>
+        <span class="fee">$149 <small>build fee</small></span>
+        <span class="budget">You supply the parts</span>
+        <p>Assembly, testing and setup only</p>
+      </div>
+    </div>
+    <div class="includes">
+      <div>
+        <h3>Every build includes</h3>
+        <ul>
+          <li>Part selection matched to your budget</li>
+          <li>Assembly and cable management</li>
+          <li>BIOS, Windows and driver setup</li>
+          <li>24-hour stress test before pickup</li>
+          <li>90-day labor warranty</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Add-ons</h3>
+        <div class="row"><span class="name">RGB / aesthetic build</span><span class="price">+$75</span></div>
+        <div class="row"><span class="name">Custom water-cooling loop</span><span class="price">Quoted</span></div>
+        <div class="row"><span class="name">Upgrade an existing PC</span><span class="price">$79 + parts</span></div>
+        <div class="row"><span class="name">Data transfer from your old PC</span><span class="price">$79</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="business">
+    <div class="sec-head">
+      <h2>Business IT support</h2>
+      <p>On-demand help and fixed-price projects for offices with 1–50 people. Prepaid hour blocks cost less per hour and stay valid for 12 months.</p>
+    </div>
+    <div class="biz">
+      <div class="rate-card">
+        <h3>Hourly rates</h3>
+        <div class="row"><span class="name">On-demand support</span><span class="price">$135/hr</span><span class="desc">1-hour minimum</span></div>
+        <div class="row"><span class="name">10-hour block</span><span class="price">$1,200</span><span class="desc">$120/hr</span></div>
+        <div class="row"><span class="name">20-hour block</span><span class="price">$2,200</span><span class="desc">$110/hr</span></div>
+        <div class="row"><span class="name">After-hours / emergency</span><span class="price">$200/hr</span><span class="desc">1-hour minimum</span></div>
+      </div>
+      <div>
+        <h3>Fixed-price projects</h3>
+        <div class="row"><span class="name">IT &amp; security assessment</span><span class="price">$299</span><span class="desc">Device inventory, backup check, account security review and a written report. Free for new managed clients.</span></div>
+        <div class="row"><span class="name">Microsoft 365 or Google Workspace setup</span><span class="price">$99/user</span><span class="desc">Accounts, company email on your domain, MFA, file sharing, migration from your old email</span></div>
+        <div class="row"><span class="name">New employee setup</span><span class="price">$149/user</span><span class="desc">Laptop configured, accounts, email, printers, security baseline</span></div>
+        <div class="row"><span class="name">Employee offboarding</span><span class="price">$99/user</span><span class="desc">Account lockout, mailbox and file handoff, device wipe and return</span></div>
+        <div class="row"><span class="name">Office network install</span><span class="price">$499 + equipment</span><span class="desc">Business firewall or router, Wi-Fi, guest network, documentation</span></div>
+        <div class="row"><span class="name">Backup setup</span><span class="price">$299 + monthly</span><span class="desc">Automated cloud backup with a tested restore</span></div>
+        <div class="row"><span class="name">Office move</span><span class="price">Quoted</span><span class="desc">Disconnect, move, reconnect and test everything</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="managed">
+    <div class="sec-head">
+      <h2>Managed IT plans</h2>
+      <p>One flat monthly fee per user covers your office's IT. 5-user minimum, month-to-month after the first 3 months. One-time onboarding is $99/user, waived with a 12-month agreement. Microsoft 365 licenses are billed at cost.</p>
+    </div>
+    <div class="plans-scroll">
+      <table class="plans">
+        <thead>
+          <tr>
+            <th scope="col"><span class="visually-hidden" style="position:absolute;left:-9999px">Feature</span></th>
+            <th scope="col">Essentials<span class="per">$75 <small>/user/mo</small></span></th>
+            <th scope="col" class="feature">Professional<span class="per">$145 <small>/user/mo</small></span></th>
+            <th scope="col">Complete<span class="per">$195 <small>/user/mo</small></span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">Device monitoring &amp; patching</th><td class="yes">Included</td><td class="yes feature">Included</td><td class="yes">Included</td></tr>
+          <tr><th scope="row">Antivirus / endpoint protection</th><td class="yes">Included</td><td class="yes feature">Included</td><td class="yes">Included</td></tr>
+          <tr><th scope="row">Remote help desk (business hours)</th><td>2 hrs/mo, then $120/hr</td><td class="yes feature">Unlimited</td><td class="yes">Unlimited</td></tr>
+          <tr><th scope="row">On-site visits</th><td>$135/hr</td><td class="feature">2 hrs/mo included</td><td>4 hrs/mo included</td></tr>
+          <tr><th scope="row">Microsoft 365 / Google backup</th><td class="no">Add-on</td><td class="yes feature">Included</td><td class="yes">Included</td></tr>
+          <tr><th scope="row">Device backup</th><td class="no">Add-on</td><td class="no feature">Add-on</td><td class="yes">Included</td></tr>
+          <tr><th scope="row">Email security &amp; phishing filter</th><td class="no">Add-on</td><td class="yes feature">Included</td><td class="yes">Included</td></tr>
+          <tr><th scope="row">Security awareness training</th><td class="no">Not included</td><td class="feature">Quarterly phishing tests</td><td>Monthly tests + training</td></tr>
+          <tr><th scope="row">New hire &amp; offboarding</th><td class="no">Billed per user</td><td class="yes feature">Included</td><td class="yes">Included</td></tr>
+          <tr><th scope="row">Vendor management</th><td class="no">Not included</td><td class="yes feature">Included</td><td class="yes">Included</td></tr>
+          <tr><th scope="row">Quarterly IT review &amp; roadmap</th><td class="no">Not included</td><td class="yes feature">Included</td><td class="yes">Included</td></tr>
+          <tr><th scope="row">After-hours emergencies</th><td>$200/hr</td><td class="feature">$200/hr</td><td class="yes">Included</td></tr>
+          <tr><th scope="row">Response time target</th><td class="mono">Next business day</td><td class="mono feature">4 business hours</td><td class="mono">1 business hour</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="addons">
+      <span>Device backup <b>$15</b>/device/mo</span>
+      <span>Email security <b>$5</b>/user/mo</span>
+      <span>Server or network monitoring from <b>$99</b>/device/mo</span>
+    </div>
+  </section>
+
+  <section class="block" id="terms">
+    <div class="sec-head">
+      <h2>The fine print</h2>
+      <p>Short and plain, so there are no surprises at pickup.</p>
+    </div>
+    <div class="terms">
+      <div><h3>Turnaround</h3><p>Repairs take 2–4 business days. Builds take 5–10 business days after parts arrive. Next-business-day rush service is +50% when available.</p></div>
+      <div><h3>Warranty</h3><p>90 days on labor, and parts carry the manufacturer's warranty. If the same problem returns within 30 days, the fix is free.</p></div>
+      <div><h3>Your data</h3><p>We handle your files with care, but keeping a backup is your responsibility. We can back up your data before service for $49.</p></div>
+      <div><h3>Quotes</h3><p>We contact you before any work that would go over the quoted price.</p></div>
+      <div><h3>Payment</h3><p>Home services are paid at pickup. Business invoices are net 15. Managed plans bill monthly in advance by card or ACH.</p></div>
+      <div><h3>Pickup &amp; cancellation</h3><p>Devices left 60 days after we tell you they're ready are considered abandoned. Managed plans need 30 days' written notice after the first 3 months.</p></div>
+    </div>
+  </section>
+
+  <section class="block" id="contact">
+    <div class="contact">
+      <div class="sec-head" style="grid-template-columns:1fr;margin:0">
+        <h2>Book a diagnostic</h2>
+        <p>Call, text or email with the device and what it's doing. You'll get a quote before any work starts. Business owners can ask for the free assessment that comes with any managed plan.</p>
+      </div>
+      <div class="contact-card">
+        <div class="row"><span class="name">Phone / text</span><span class="price">(000) 000-0000</span></div>
+        <div class="row"><span class="name">Email</span><span class="price">hello@rbtechworks.com</span></div>
+        <div class="row"><span class="name">Service area</span><span class="price">[City] + 20 miles</span></div>
+        <div class="row" style="border-bottom:0"><span class="name">Hours</span><span class="price">[Days / hours]</span></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span>© 2026 RB Tech Works LLC</span>
+    <span>Prices effective October 2026</span>
+  </footer>
+</main>
+</body>
+</html>
