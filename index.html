@@ -149,6 +149,24 @@ table.plans { width: 100%; border-collapse: collapse; min-width: 640px; font-siz
 .contact > * { min-width: 0; }
 .contact-card { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 20px; }
 .contact-card .row .price { font-weight: 500; user-select: all; }
+.contact-side { display: grid; gap: 24px; }
+.req-form { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 24px; display: grid; gap: 16px; }
+.req-form h3 { font-size: 1.15rem; font-weight: 750; }
+.req-form label { display: grid; gap: 6px; font-size: 0.9rem; font-weight: 600; }
+.req-form .opt { font-weight: 400; color: var(--muted); }
+.req-form input, .req-form select, .req-form textarea { font: 400 1rem/1.4 var(--body); color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px; width: 100%; }
+.req-form textarea { resize: vertical; }
+.req-form input:focus-visible, .req-form select:focus-visible, .req-form textarea:focus-visible { outline: 2px solid var(--green); outline-offset: 1px; }
+.req-form [aria-invalid="true"] { border-color: var(--copper); }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.field-row > * { min-width: 0; }
+.req-form button { border: 0; cursor: pointer; justify-self: start; font-family: var(--body); }
+.req-form button[disabled] { opacity: .6; cursor: progress; }
+.form-status { font-size: 0.92rem; min-height: 1.4em; }
+.form-status.ok { color: var(--green); font-weight: 600; }
+.form-status.err { color: var(--copper); font-weight: 600; }
+.hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+@media (max-width: 480px) { .field-row { grid-template-columns: 1fr; } }
 footer { padding-block: 32px 48px; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.85rem; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
 
 @media (max-width: 860px) {
@@ -367,16 +385,43 @@ footer { padding-block: 32px 48px; border-top: 1px solid var(--line); color: var
 
   <section class="block" id="contact">
     <div class="contact">
-      <div class="sec-head" style="grid-template-columns:1fr;margin:0">
-        <h2>Book a diagnostic</h2>
-        <p>Call, text or email with the device and what it's doing. You'll get a quote before any work starts. Business owners can ask for the free assessment that comes with any managed plan.</p>
+      <div class="contact-side">
+        <div class="sec-head" style="grid-template-columns:1fr;margin:0">
+          <h2>Book a diagnostic</h2>
+          <p>Send the form, or call, text or email with the device and what it's doing. You'll get a quote before any work starts. Business owners can ask for the free assessment that comes with any managed plan.</p>
+        </div>
+        <div class="contact-card">
+          <div class="row"><span class="name">Phone / text</span><span class="price">(000) 000-0000</span></div>
+          <div class="row"><span class="name">Email</span><span class="price">hello@rbtechworks.com</span></div>
+          <div class="row"><span class="name">Service area</span><span class="price">[City] + 20 miles</span></div>
+          <div class="row" style="border-bottom:0"><span class="name">Hours</span><span class="price">[Days / hours]</span></div>
+        </div>
       </div>
-      <div class="contact-card">
-        <div class="row"><span class="name">Phone / text</span><span class="price">(000) 000-0000</span></div>
-        <div class="row"><span class="name">Email</span><span class="price">hello@rbtechworks.com</span></div>
-        <div class="row"><span class="name">Service area</span><span class="price">[City] + 20 miles</span></div>
-        <div class="row" style="border-bottom:0"><span class="name">Hours</span><span class="price">[Days / hours]</span></div>
-      </div>
+      <form class="req-form" id="request-form" novalidate>
+        <h3>Request service</h3>
+        <input type="hidden" name="access_key" value="b13c111c-7279-4301-97ac-bfdec771c47e">
+        <input type="hidden" name="subject" value="New service request from rbtechworks.com">
+        <input type="hidden" name="from_name" value="RB Tech Works website">
+        <input type="checkbox" name="botcheck" id="botcheck" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <div class="field-row">
+          <label for="f-name">Name<input id="f-name" name="name" type="text" autocomplete="name" required></label>
+          <label for="f-phone">Phone <span class="opt">(optional)</span><input id="f-phone" name="phone" type="tel" autocomplete="tel"></label>
+        </div>
+        <label for="f-email">Email<input id="f-email" name="email" type="email" autocomplete="email" required></label>
+        <label for="f-service">What do you need?
+          <select id="f-service" name="service" required>
+            <option value="">Choose one</option>
+            <option>Home computer repair</option>
+            <option>Custom PC build</option>
+            <option>Business IT project</option>
+            <option>Managed IT plan</option>
+            <option>Something else</option>
+          </select>
+        </label>
+        <label for="f-message">What's going on?<textarea id="f-message" name="message" rows="5" placeholder="The device, what it's doing, and anything you've already tried" required></textarea></label>
+        <button type="submit" class="btn primary" id="f-submit">Send request</button>
+        <p class="form-status" id="f-status" role="status" aria-live="polite"></p>
+      </form>
     </div>
   </section>
 
@@ -384,5 +429,37 @@ footer { padding-block: 32px 48px; border-top: 1px solid var(--line); color: var
     <span>© 2026 RB Tech Works LLC</span>
   </footer>
 </main>
+<script>
+(function () {
+  var form = document.getElementById('request-form');
+  if (!form) return;
+  var status = document.getElementById('f-status');
+  var btn = document.getElementById('f-submit');
+  function say(msg, cls) { status.textContent = msg; status.className = 'form-status ' + (cls || ''); }
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var bad = null;
+    form.querySelectorAll('[required]').forEach(function (el) {
+      var ok = el.value.trim() !== '' && (el.type !== 'email' || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(el.value.trim()));
+      el.setAttribute('aria-invalid', ok ? 'false' : 'true');
+      if (!ok && !bad) bad = el;
+    });
+    if (bad) { say('Please fill in your name, a valid email, the service and a short description.', 'err'); bad.focus(); return; }
+    if (form.access_key.value.indexOf('WEB3FORMS') === 0) { say('The form isn\'t connected yet. Please call, text or email instead.', 'err'); return; }
+    btn.disabled = true; say('Sending…');
+    var data = {}; new FormData(form).forEach(function (v, k) { data[k] = v; });
+    data.replyto = data.email;
+    fetch('https://api.web3forms.com/submit', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(data) })
+      .then(function (r) { return r.json(); })
+      .then(function (j) {
+        if (j.success) { form.reset(); say('Thanks! Your request was sent. Expect a reply within one business day.', 'ok'); }
+        else { say('That didn\'t go through. Please try again, or call, text or email instead.', 'err'); }
+      })
+      .catch(function () { say('That didn\'t go through. Please check your connection, or call, text or email instead.', 'err'); })
+      .then(function () { btn.disabled = false; });
+  });
+})();
+</script>
+
 </body>
 </html>
