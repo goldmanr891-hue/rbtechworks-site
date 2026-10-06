@@ -82,11 +82,13 @@ nav a:hover { color: var(--ink); background: var(--surface); }
 
 /* Ticket strip */
 .ticket-strip { background: var(--bg-2); border-bottom: 1px solid var(--line-soft); }
-.ticket { display: grid; grid-template-columns: auto repeat(4, 1fr) auto; align-items: stretch; }
+.ticket { display: grid; grid-template-columns: repeat(4, 1fr); align-items: stretch; }
 .ticket-label { font-family: var(--mono); font-size: .74rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); padding: 22px 24px 22px 0; display: flex; flex-direction: column; justify-content: center; gap: 2px; border-right: 1px dashed var(--line); }
 .ticket-label b { color: var(--ink); font-weight: 600; }
 .ticket ol { list-style: none; margin: 0; padding: 0; display: contents; }
 .ticket li { padding: 22px 20px; border-right: 1px solid var(--line-soft); display: flex; gap: 12px; align-items: baseline; font-size: .95rem; min-width: 0; }
+.ticket li:first-child { padding-left: 0; }
+.ticket li:last-child { border-right: 0; }
 .ticket li .k { font-family: var(--mono); color: var(--green-hi); font-weight: 600; flex: none; }
 .ticket li b { color: var(--copper-hi); font-family: var(--mono); font-weight: 600; }
 .stamp-cell { display: flex; align-items: center; padding-left: 20px; }
@@ -332,14 +334,12 @@ footer .mark svg { width: 24px; height: 24px; }
   <div class="ticket-strip">
     <div class="wrap">
       <aside class="ticket" aria-label="How a repair works">
-        <div class="ticket-label"><span>Repair ticket</span><b class="mono">No. 0001</b></div>
         <ol>
           <li><span class="k">01</span><span><b>$65 diagnostic</b>, waived if you approve the repair</span></li>
           <li><span class="k">02</span><span>Flat-rate quote before any work starts</span></li>
           <li><span class="k">03</span><span>Most repairs done in 2–4 business days</span></li>
           <li><span class="k">04</span><span>30-day labor warranty on every job</span></li>
         </ol>
-        <div class="stamp-cell"><span class="stamp">No fix, no fee</span></div>
       </aside>
     </div>
   </div>
