@@ -3,8 +3,21 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Computer repair, custom PC builds and small-business IT support with flat, up-front pricing.">
-<title>RB Tech Works</title>
+<meta name="description" content="Computer and phone repair, custom PC builds and small-business IT support in Holly, Michigan, with flat, up-front pricing.">
+<title>RB Tech Works | Computer Repair &amp; IT Support in Holly, MI</title>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ComputerStore",
+  "name": "RB Tech Works",
+  "url": "https://rbtechworks.com",
+  "telephone": "+1-248-408-9718",
+  "email": "support@rbtechworks.com",
+  "address": { "@type": "PostalAddress", "addressLocality": "Holly", "addressRegion": "MI", "addressCountry": "US" },
+  "areaServed": "Holly, MI",
+  "openingHoursSpecification": [{ "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"], "opens": "07:00", "closes": "17:00" }]
+}
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
@@ -82,7 +95,7 @@ nav a:hover { color: var(--ink); background: var(--surface); }
 
 /* Ticket strip */
 .ticket-strip { background: var(--bg-2); border-bottom: 1px solid var(--line-soft); }
-.ticket { display: grid; grid-template-columns: repeat(4, 1fr); align-items: stretch; }
+.ticket { display: grid; grid-template-columns: repeat(3, 1fr); align-items: stretch; }
 .ticket-label { font-family: var(--mono); font-size: .74rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); padding: 22px 24px 22px 0; display: flex; flex-direction: column; justify-content: center; gap: 2px; border-right: 1px dashed var(--line); }
 .ticket-label b { color: var(--ink); font-weight: 600; }
 .ticket ol { list-style: none; margin: 0; padding: 0; display: contents; }
@@ -202,7 +215,7 @@ footer .mark svg { width: 24px; height: 24px; }
 }
 
 @media (max-width: 960px) {
-  .ticket { grid-template-columns: 1fr 1fr; }
+  .ticket { grid-template-columns: repeat(3, 1fr); }
   .ticket-label { grid-column: 1 / -1; border-right: 0; border-bottom: 1px dashed var(--line); padding: 16px 0; flex-direction: row; gap: 12px; }
   .ticket li { padding: 16px 16px 16px 0; border-right: 0; border-bottom: 1px solid var(--line-soft); }
   .stamp-cell { grid-column: 1 / -1; padding: 16px 0; }
@@ -270,9 +283,9 @@ footer .mark svg { width: 24px; height: 24px; }
     </svg>
     <div class="wrap">
       <div>
-        <p class="eyebrow">Computer repair · Custom builds · Small-business IT</p>
+        <p class="eyebrow">Holly, MI · Repair · Custom builds · IT support</p>
         <h1>Fixed right. <em>Priced up front.</em></h1>
-        <p class="lead">Repairs and upgrades for home computers, custom PCs built to order, and IT support for offices of 1–50 people. Common jobs have flat prices. Anything else gets a quote before work starts.</p>
+        <p class="lead">Repairs and upgrades for home computers, custom PCs built to order, and IT support for offices of 1–50 people. Common jobs have flat prices.</p>
         <div class="cta-row">
           <a class="btn primary" href="#contact">Book a diagnostic <span class="arr" aria-hidden="true">→</span></a>
           <a class="btn ghost" href="#managed">See business plans</a>
@@ -340,9 +353,8 @@ footer .mark svg { width: 24px; height: 24px; }
       <aside class="ticket" aria-label="How a repair works">
         <ol>
           <li><span class="k">01</span><span><b>$65 diagnostic</b>, waived if you approve the repair</span></li>
-          <li><span class="k">02</span><span>Flat-rate quote before any work starts</span></li>
-          <li><span class="k">03</span><span>Most repairs done in 2–4 business days</span></li>
-          <li><span class="k">04</span><span>30-day labor warranty on every job</span></li>
+          <li><span class="k">02</span><span>Most repairs done in 2–4 business days</span></li>
+          <li><span class="k">03</span><span>30-day labor warranty on every job</span></li>
         </ol>
       </aside>
     </div>
@@ -525,10 +537,10 @@ footer .mark svg { width: 24px; height: 24px; }
             <p>Send the form, or call, text or email with the device and what it's doing. You'll get a quote before any work starts. Business owners can ask for the free assessment that comes with any managed plan.</p>
           </div>
           <div class="contact-card">
-            <div class="row"><span class="name">Phone / text</span><span class="price">(000) 000-0000</span></div>
-            <div class="row"><span class="name">Email</span><span class="price">hello@rbtechworks.com</span></div>
-            <div class="row"><span class="name">Service area</span><span class="price">[City] + 20 miles</span></div>
-            <div class="row" style="border-bottom:0"><span class="name">Hours</span><span class="price">[Days / hours]</span></div>
+            <div class="row"><span class="name">Location</span><span class="price">Holly, MI</span></div>
+            <div class="row"><span class="name">Phone / text</span><span class="price">(248) 408-9718</span></div>
+            <div class="row"><span class="name">Email</span><span class="price">support@rbtechworks.com</span></div>
+            <div class="row" style="border-bottom:0"><span class="name">Hours</span><span class="price">Monday–Friday, 7 AM–5 PM</span></div>
           </div>
         </div>
         <form class="req-form" id="request-form" novalidate>
@@ -539,7 +551,7 @@ footer .mark svg { width: 24px; height: 24px; }
           <input type="checkbox" name="botcheck" id="botcheck" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
           <div class="field-row">
             <label for="f-name">Name<input id="f-name" name="name" type="text" autocomplete="name" required></label>
-            <label for="f-phone">Phone <span class="opt">(optional)</span><input id="f-phone" name="phone" type="tel" autocomplete="tel"></label>
+            <label for="f-phone"><span>Phone <span class="opt">(optional)</span></span><input id="f-phone" name="phone" type="tel" autocomplete="tel"></label>
           </div>
           <label for="f-email">Email<input id="f-email" name="email" type="email" autocomplete="email" required></label>
           <label for="f-service">What do you need?
@@ -564,7 +576,7 @@ footer .mark svg { width: 24px; height: 24px; }
 <footer>
   <div class="wrap">
     <span class="mark"><svg viewBox="0 0 200 200" aria-hidden="true"><g fill="#c0743a"><rect x="58" y="10" width="12" height="26" rx="3"/><rect x="94" y="10" width="12" height="26" rx="3"/><rect x="130" y="10" width="12" height="26" rx="3"/><rect x="58" y="164" width="12" height="26" rx="3"/><rect x="94" y="164" width="12" height="26" rx="3"/><rect x="130" y="164" width="12" height="26" rx="3"/><rect x="10" y="58" width="26" height="12" rx="3"/><rect x="10" y="94" width="26" height="12" rx="3"/><rect x="10" y="130" width="26" height="12" rx="3"/><rect x="164" y="58" width="26" height="12" rx="3"/><rect x="164" y="94" width="26" height="12" rx="3"/><rect x="164" y="130" width="26" height="12" rx="3"/></g><rect x="30" y="30" width="140" height="140" rx="20" fill="#1d6b4a"/><circle cx="52" cy="52" r="6" fill="#fff" fill-opacity=".35"/><text x="100" y="122" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-weight="600" font-size="62" fill="#fff">RB</text></svg>RB TECH WORKS</span>
-    <span>© 2026 RB Tech Works LLC</span>
+    <span>© 2026 RB Tech Works LLC · Holly, Michigan</span>
   </div>
 </footer>
 
