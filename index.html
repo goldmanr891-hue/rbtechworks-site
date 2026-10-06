@@ -116,6 +116,9 @@ section.block + section.block::before { content: ""; position: absolute; top: 0;
 .sec-num { font-family: var(--mono); font-size: .78rem; color: var(--copper-hi); letter-spacing: .12em; text-transform: uppercase; display: block; margin-bottom: 12px; }
 .sec-head h2 { font-size: clamp(2rem, 4.2vw, 3.1rem); font-weight: 850; font-stretch: 118%; letter-spacing: -0.02em; }
 .sec-head p { color: var(--muted); max-width: 40em; }
+.sec-head.about { align-items: start; margin-bottom: 0; }
+.about-body { display: grid; gap: 14px; color: var(--muted); max-width: 40em; }
+.about-body .sign { font-family: var(--mono); color: var(--copper-hi); letter-spacing: .06em; }
 
 /* Price rows */
 .prices { display: grid; grid-template-columns: 1fr 1fr; gap: 0 56px; }
@@ -288,7 +291,6 @@ footer .mark svg { width: 24px; height: 24px; }
         <p class="lead">Repairs and upgrades for home computers, custom PCs built to order, and IT support for offices of 1–50 people. Common jobs have flat prices.</p>
         <div class="cta-row">
           <a class="btn primary" href="#contact">Book a diagnostic <span class="arr" aria-hidden="true">→</span></a>
-          <a class="btn ghost" href="#managed">See business plans</a>
         </div>
       </div>
 
@@ -528,12 +530,25 @@ footer .mark svg { width: 24px; height: 24px; }
     </div>
   </section>
 
-  <section class="block alt" id="contact">
+  <section class="block alt" id="about">
+    <div class="wrap">
+      <div class="sec-head about">
+        <div><span class="sec-num">06 / About</span><h2>About RB Tech Works</h2></div>
+        <div class="about-body">
+          <p>RB Tech Works is a local computer and IT business in Holly, Michigan, backed by 10 years of hands-on IT experience: supporting offices, managing Microsoft 365, networks and security, and fixing just about anything with a power button.</p>
+          <p>I started RB Tech Works to bring that same level of care to homes and small businesses across Michigan. That means honest diagnoses, prices posted up front, and repairs explained in plain English. When you call, you talk to the person who'll actually work on your device.</p>
+          <p>Whether it's a slow laptop, a cracked phone screen, a custom gaming PC or an office that needs its IT handled, I'll treat it like my own.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="contact">
     <div class="wrap">
       <div class="contact">
         <div class="contact-side">
           <div class="sec-head">
-            <div><span class="sec-num">06 / Contact</span><h2>Book a diagnostic</h2></div>
+            <div><span class="sec-num">07 / Contact</span><h2>Book a diagnostic</h2></div>
             <p>Send the form, or call, text or email with the device and what it's doing. You'll get a quote before any work starts. Business owners can ask for the free assessment that comes with any managed plan.</p>
           </div>
           <div class="contact-card">
