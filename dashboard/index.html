@@ -134,6 +134,19 @@ main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 48px; display: grid
   <p class="msg" id="l-msg" role="status"></p>
 </form>
 
+<form class="login" id="mfa" hidden>
+  <h1 id="m-title">Two-factor code</h1>
+  <p class="msg" id="m-intro">Enter the 6-digit code from your authenticator app.</p>
+  <div id="m-enroll" hidden>
+    <img id="m-qr" alt="QR code to add RB Tech Works to your authenticator app" width="200" height="200" style="background:#fff;border-radius:8px;padding:8px;justify-self:start">
+    <p class="msg">Can't scan? Enter this key in the app: <code id="m-secret" style="font-family:var(--mono);color:var(--ink);overflow-wrap:anywhere"></code></p>
+  </div>
+  <label class="field"><span class="lbl">6-digit code</span><input id="m-code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" required></label>
+  <button class="btn primary" id="m-btn">Verify</button>
+  <button type="button" class="btn ghost" id="m-cancel">Sign out</button>
+  <p class="msg" id="m-msg" role="status"></p>
+</form>
+
 <main id="app" hidden>
   <section class="stats" id="stats" aria-label="Service counts"></section>
   <div class="chips"><div class="chips" id="chips" role="group" aria-label="Filter by status"></div><span class="sync" id="sync"></span></div>
@@ -167,17 +180,57 @@ main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 48px; display: grid
   var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
   var digits = function (p) { return String(p || '').replace(/[^\d+]/g, ''); };
 
-  // ── Auth ──
+  // ── Auth: password, then a required authenticator-app code (two-factor) ──
+  var mfaFactorId = null, gating = false;
   async function boot() {
-    var res = await db.auth.getSession();
-    showApp(!!res.data.session);
-    db.auth.onAuthStateChange(function (_e, session) { showApp(!!session); });
+    await gate();
+    db.auth.onAuthStateChange(function (event) { if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') setTimeout(gate, 0); });
   }
-  function showApp(signedIn) {
-    $('login').hidden = signedIn; $('app').hidden = !signedIn;
-    ['q', 'new-btn', 'out-btn'].forEach(function (id) { $(id).hidden = !signedIn; });
-    if (signedIn) { load(); } else { services = []; $('layer').innerHTML = ''; }
+  function screen(which) { // 'login' | 'mfa' | 'app'
+    $('login').hidden = which !== 'login'; $('mfa').hidden = which !== 'mfa'; $('app').hidden = which !== 'app';
+    ['q', 'new-btn', 'out-btn'].forEach(function (id) { $(id).hidden = which !== 'app'; });
+    if (which !== 'app') { services = []; $('layer').innerHTML = ''; }
   }
+  async function gate() {
+    if (gating) return; gating = true;
+    try {
+      var s = await db.auth.getSession();
+      if (!s.data.session) { screen('login'); return; }
+      var aal = (await db.auth.mfa.getAuthenticatorAssuranceLevel()).data;
+      if (aal && aal.currentLevel === 'aal2') { screen('app'); load(); return; }
+      var factors = (await db.auth.mfa.listFactors()).data || { all: [], totp: [] };
+      var verified = (factors.totp || []).filter(function (f) { return f.status === 'verified'; });
+      $('m-code').value = ''; $('m-msg').textContent = ''; $('m-msg').className = 'msg';
+      if (verified.length) {
+        mfaFactorId = verified[0].id;
+        $('m-title').textContent = 'Two-factor code';
+        $('m-intro').textContent = 'Enter the 6-digit code from your authenticator app.';
+        $('m-enroll').hidden = true;
+      } else {
+        // First time: clear any half-finished setup, then show a QR code to scan.
+        for (var i = 0; i < (factors.all || []).length; i++) {
+          if (factors.all[i].status !== 'verified') await db.auth.mfa.unenroll({ factorId: factors.all[i].id });
+        }
+        var en = await db.auth.mfa.enroll({ factorType: 'totp', friendlyName: 'RB Tech Works dashboard' });
+        if (en.error) { screen('mfa'); $('m-msg').className = 'msg err'; $('m-msg').textContent = en.error.message; return; }
+        mfaFactorId = en.data.id;
+        $('m-title').textContent = 'Set up two-factor sign-in';
+        $('m-intro').textContent = 'Scan this QR code with Microsoft Authenticator or Google Authenticator, then enter the 6-digit code it shows.';
+        $('m-qr').src = en.data.totp.qr_code; $('m-secret').textContent = en.data.totp.secret;
+        $('m-enroll').hidden = false;
+      }
+      screen('mfa'); $('m-code').focus();
+    } finally { gating = false; }
+  }
+  $('mfa').addEventListener('submit', async function (e) {
+    e.preventDefault(); $('m-btn').disabled = true; $('m-msg').className = 'msg'; $('m-msg').textContent = 'Checking…';
+    var r = await db.auth.mfa.challengeAndVerify({ factorId: mfaFactorId, code: $('m-code').value.trim() });
+    $('m-btn').disabled = false;
+    if (r.error) { $('m-msg').className = 'msg err'; $('m-msg').textContent = 'That code didn\'t work. Wait for a new code and try again.'; return; }
+    $('m-qr').removeAttribute('src'); $('m-secret').textContent = '';
+    gate();
+  });
+  $('m-cancel').onclick = function () { db.auth.signOut(); };
   $('login').addEventListener('submit', async function (e) {
     e.preventDefault(); $('l-btn').disabled = true; $('l-msg').className = 'msg'; $('l-msg').textContent = 'Signing in…';
     var r = await db.auth.signInWithPassword({ email: $('l-email').value.trim(), password: $('l-pass').value });
