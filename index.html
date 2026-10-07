@@ -126,6 +126,11 @@ section.block + section.block::before { content: ""; position: absolute; top: 0;
 .row .name { font-weight: 600; color: var(--ink); }
 .row .price { font-family: var(--mono); font-weight: 600; font-variant-numeric: tabular-nums; color: var(--copper-hi); text-align: right; white-space: nowrap; }
 .row .desc { grid-column: 1 / -1; color: var(--muted); font-size: .9rem; }
+.ask { margin-top: 28px; display: flex; align-items: center; justify-content: space-between; gap: 16px 24px; flex-wrap: wrap; padding: 18px 22px; border: 1px solid var(--line); border-left: 3px solid var(--copper-hi); border-radius: 10px; background: var(--surface); }
+.ask > div { display: grid; gap: 2px; min-width: 0; flex: 1 1 320px; }
+.ask b { font-family: var(--display); font-stretch: 112%; font-weight: 800; font-size: 1.1rem; }
+.ask span { color: var(--muted); }
+.ask + .note { margin-top: 14px; }
 .note { margin-top: 28px; font-size: .92rem; color: var(--muted); display: flex; gap: 12px; align-items: baseline; padding: 14px 18px; border: 1px dashed var(--line); border-radius: 8px; max-width: 46em; }
 .note::before { content: "NOTE"; font-family: var(--mono); font-size: .72rem; letter-spacing: .1em; color: var(--green-hi); flex: none; }
 
@@ -366,7 +371,6 @@ footer .mark svg { width: 24px; height: 24px; }
     <div class="wrap">
       <div class="sec-head">
         <div><span class="sec-num">01 / Home</span><h2>Home repair &amp; setup</h2></div>
-        <p>Flat rates for laptops, desktops, phones and home networks. Work not listed is $95/hr, billed in 30-minute increments. Parts are billed at cost plus 15%, or you can bring your own.</p>
       </div>
       <div class="prices">
         <div class="row"><span class="name">Tune-up</span><span class="price">$60</span><span class="desc">Cleanup, startup optimization, updates, drive and battery health check</span></div>
@@ -386,6 +390,10 @@ footer .mark svg { width: 24px; height: 24px; }
         <div class="row"><span class="name">Printer setup</span><span class="price">$60</span><span class="desc">Connected to Wi-Fi and every device in the house</span></div>
         <div class="row"><span class="name">Smart home &amp; TV setup</span><span class="price">$95/hr</span><span class="desc">Cameras, doorbells, smart TVs, streaming devices</span></div>
         <div class="row"><span class="name">Remote help session</span><span class="price">$45</span><span class="desc">Up to 30 minutes for quick fixes and how-to questions. Extra time is billed at the hourly rate.</span></div>
+      </div>
+      <div class="ask">
+        <div><b>Don't see what you need?</b><span>No worries. If it's tech, there's a good chance we can help. Tell us what's going on.</span></div>
+        <a class="btn ghost" href="#contact">Ask about it <span class="arr" aria-hidden="true">→</span></a>
       </div>
       <p class="note"><span>On-site visits add a $49 trip fee within 20 miles. Remote sessions have no trip fee.</span></p>
     </div>
