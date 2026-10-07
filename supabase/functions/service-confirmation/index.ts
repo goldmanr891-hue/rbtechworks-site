@@ -23,9 +23,11 @@ Deno.serve(async (req) => {
   if (!id) return new Response("no record id", { status: 400 });
 
   const { data: svc, error } = await supabase
-    .from("services").select("id, name, email, service_type, source").eq("id", id).single();
+    .from("services").select("id, name, email, service_type, source, notify").eq("id", id).single();
   if (error || !svc) return new Response("not found", { status: 404 });
-  if (svc.source !== "Website" || !svc.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(svc.email)) {
+  // Website requests always get a confirmation; services added in the dashboard only when "notify" was checked.
+  const wanted = svc.source === "Website" || svc.notify === true;
+  if (!wanted || !svc.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(svc.email)) {
     return new Response("skipped", { status: 200 });
   }
 

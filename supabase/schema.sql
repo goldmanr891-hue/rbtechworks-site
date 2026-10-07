@@ -17,8 +17,10 @@ create table if not exists public.services (
   status        text not null default 'New'
                 check (status in ('New','Quoted','Approved','In progress','Ready for pickup','Paid','Closed')),
   source        text not null default 'Website'
-                check (source in ('Website','Call','Text','Walk-in','Email','Facebook'))
+                check (source in ('Website','Call','Text','Walk-in','Email','Facebook')),
+  notify        boolean not null default false  -- owner-created services: send the confirmation email
 );
+alter table public.services add column if not exists notify boolean not null default false;
 
 create table if not exists public.service_events (
   id          bigint generated always as identity primary key,

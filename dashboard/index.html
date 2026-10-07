@@ -99,6 +99,9 @@ main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 48px; display: grid
 .modal h2 { margin: 0; font-family: var(--display); font-stretch: 112%; font-weight: 800; font-size: 1.3rem; }
 .two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; } .two > * { min-width: 0; }
 .actions { display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; }
+.check { display: flex; gap: 10px; align-items: flex-start; font-size: .92rem; }
+.check input { width: 18px; height: 18px; margin-top: 2px; accent-color: var(--green-hi); flex: none; }
+.check small { color: var(--muted); }
 
 @media (max-width: 860px) {
   .stats { grid-template-columns: repeat(2, 1fr); }
@@ -277,15 +280,22 @@ main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 48px; display: grid
       '<label class="field"><span class="lbl">Service type</span><select id="n-type">' + TYPES.map(function (t) { return '<option>' + t + '</option>'; }).join('') + '</select></label>' +
       '<div class="two"><label class="field"><span class="lbl">Device</span><input id="n-device" placeholder="e.g. HP laptop" maxlength="200"></label><label class="field"><span class="lbl">Quote ($, labor)</span><input id="n-quote" type="number" min="0" step="0.01"></label></div>' +
       '<label class="field"><span class="lbl">What\'s going on</span><textarea id="n-issue" rows="3" maxlength="4000"></textarea></label>' +
+      '<label class="check"><input type="checkbox" id="n-notify" checked disabled> <span>Email the customer a confirmation <small id="n-notify-hint">(add an email address first)</small></span></label>' +
       '<div class="actions"><span class="msg" id="n-msg" role="status"></span><button type="button" class="btn ghost" data-close>Cancel</button><button class="btn primary" id="n-btn">Add service</button></div></form>';
     $('n-name').focus();
+    // The confirmation checkbox only applies once there's a plausible email address.
+    $('n-email').addEventListener('input', function () {
+      var ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.value.trim());
+      $('n-notify').disabled = !ok; $('n-notify-hint').hidden = ok;
+    });
     $('nf').onsubmit = async function (e) {
       e.preventDefault(); $('n-btn').disabled = true;
       var q = $('n-quote').value;
+      var notify = !$('n-notify').disabled && $('n-notify').checked;
       var r = await db.from('services').insert({
         name: $('n-name').value.trim(), phone: $('n-phone').value.trim() || null, email: $('n-email').value.trim() || null,
         source: $('n-src').value, service_type: $('n-type').value, device: $('n-device').value.trim() || null,
-        issue: $('n-issue').value.trim() || null, quote: q === '' ? null : Number(q)
+        issue: $('n-issue').value.trim() || null, quote: q === '' ? null : Number(q), notify: notify
       }).select().single();
       $('n-btn').disabled = false;
       if (r.error) return alertIn('n-msg', r.error.message);
