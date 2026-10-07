@@ -571,6 +571,14 @@ footer .mark svg { width: 24px; height: 24px; }
     btn.disabled = true; say('Sending…');
     var data = {}; new FormData(form).forEach(function (v, k) { data[k] = v; });
     data.replyto = data.email;
+    // Also save the request to the services dashboard (insert-only public key; see supabase/schema.sql).
+    if (!data.botcheck) {
+      fetch('https://izuvozkjhxthwmxhkalr.supabase.co/rest/v1/services', {
+        method: 'POST', keepalive: true,
+        headers: { 'apikey': 'sb_publishable_n-aSt2l0f0JRrnORpoSRew_sKz57J1p', 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+        body: JSON.stringify({ name: data.name, phone: data.phone || null, email: data.email, service_type: data.service, issue: data.message })
+      }).catch(function () {});
+    }
     fetch('https://api.web3forms.com/submit', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(data) })
       .then(function (r) { return r.json(); })
       .then(function (j) {
