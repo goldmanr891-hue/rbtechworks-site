@@ -90,6 +90,7 @@ main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 48px; display: grid
 .steps button { border: 1px solid var(--line); background: transparent; border-radius: 999px; padding: 4px 10px; font-size: .8rem; color: var(--muted); }
 .steps button[aria-pressed="true"] { border-color: var(--c); color: var(--c); background: color-mix(in srgb, var(--c) 15%, transparent); }
 .contact { display: flex; flex-wrap: wrap; gap: 8px; }
+.contact .pref-tag { color: var(--copper-hi); border: 1px solid var(--copper-hi); border-radius: 8px; padding: 6px 10px; font-size: .88rem; font-weight: 600; }
 .contact a { color: var(--green-hi); text-decoration: none; border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; font-size: .88rem; }
 .log { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; font-size: .88rem; }
 .log li { border-left: 2px solid var(--line); padding-left: 10px; overflow-wrap: anywhere; }
@@ -268,7 +269,7 @@ main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 48px; display: grid
     });
     $('rows').innerHTML = list.length ? list.map(function (s) {
       return '<button class="row" data-id="' + s.id + '"><span class="num">#' + s.id + '</span>' +
-        '<span class="cust"><b>' + esc(s.name) + '</b><span>' + esc(s.phone || s.email || '') + '</span></span>' +
+        '<span class="cust"><b>' + esc(s.name) + '</b><span>' + esc(s.phone || s.email || '') + (s.contact_pref ? ' · prefers ' + esc(s.contact_pref.toLowerCase()) : '') + '</span></span>' +
         '<span class="what"><b>' + esc(s.device || s.service_type || '—') + '<span class="src">' + esc(s.source) + '</span></b><span class="sub">' + esc(s.issue || '') + '</span></span>' +
         '<span class="st"><span class="pill" style="--c:' + colorOf(s.status) + '">' + esc(s.status) + '</span></span>' +
         '<span class="amt">' + money(s.quote) + '</span><span class="age">' + age(s.created_at) + '</span></button>';
@@ -285,11 +286,11 @@ main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 48px; display: grid
       '<header><div><span class="num">#' + s.id + ' · ' + esc(s.source) + ' · ' + when(s.created_at) + '</span><h2>' + esc(s.name) + '</h2></div><button class="x" data-close aria-label="Close">✕</button></header>' +
       '<div class="body">' +
       '<div><span class="lbl">Status</span><div class="steps">' + STATUSES.map(function (x) { return '<button data-st="' + x.k + '" style="--c:' + x.c + '" aria-pressed="' + (s.status === x.k) + '">' + x.k + '</button>'; }).join('') + '</div></div>' +
-      '<div class="contact">' + (tel ? '<a href="tel:' + tel + '">Call ' + esc(s.phone) + '</a><a href="sms:' + tel + '">Text</a>' : '') + (s.email ? '<a href="mailto:' + esc(s.email) + '">Email ' + esc(s.email) + '</a>' : '') + '</div>' +
+      '<div class="contact">' + (s.contact_pref ? '<span class="pref-tag">Prefers ' + esc(s.contact_pref.toLowerCase()) + '</span>' : '') + (tel ? '<a href="tel:' + tel + '">Call ' + esc(s.phone) + '</a><a href="sms:' + tel + '">Text</a>' : '') + (s.email ? '<a href="mailto:' + esc(s.email) + '">Email ' + esc(s.email) + '</a>' : '') + '</div>' +
       '<form id="ef" class="body" style="padding:0">' +
       '<div class="two"><label class="field"><span class="lbl">Name</span><input id="e-name" value="' + esc(s.name) + '" required maxlength="120"></label><label class="field"><span class="lbl">Phone</span><input id="e-phone" type="tel" value="' + esc(s.phone) + '" maxlength="40"></label></div>' +
       '<div class="two"><label class="field"><span class="lbl">Email</span><input id="e-email" type="email" value="' + esc(s.email) + '" maxlength="200"></label><label class="field"><span class="lbl">Service type</span><select id="e-type">' + TYPES.map(function (t) { return '<option' + (t === s.service_type ? ' selected' : '') + '>' + t + '</option>'; }).join('') + '</select></label></div>' +
-      '<label class="field"><span class="lbl">Device</span><input id="e-device" value="' + esc(s.device) + '" maxlength="200"></label>' +
+      '<div class="two"><label class="field"><span class="lbl">Device</span><input id="e-device" value="' + esc(s.device) + '" maxlength="200"></label><label class="field"><span class="lbl">Preferred contact</span>' + prefSelect('e-pref', s.contact_pref) + '</label></div>' +
       '<label class="field"><span class="lbl">Problem / request</span><textarea id="e-issue" rows="3" maxlength="4000">' + esc(s.issue) + '</textarea></label>' +
       '<div class="two"><label class="field"><span class="lbl">Quote ($, labor)</span><input id="e-quote" type="number" min="0" step="0.01" value="' + (s.quote == null ? '' : s.quote) + '"></label><label class="field"><span class="lbl">Parts</span><input id="e-parts" value="' + esc(s.parts) + '" maxlength="500" placeholder="e.g. screen $110"></label></div>' +
       '<div class="actions"><span class="msg" id="e-msg" role="status"></span><button class="btn ghost">Save details</button></div></form>' +
@@ -311,7 +312,7 @@ main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 48px; display: grid
       var r = await db.from('services').update({
         name: $('e-name').value.trim(), phone: $('e-phone').value.trim() || null, email: $('e-email').value.trim() || null,
         service_type: $('e-type').value, device: $('e-device').value.trim() || null, issue: $('e-issue').value.trim() || null,
-        quote: q === '' ? null : Number(q), parts: $('e-parts').value.trim() || null
+        quote: q === '' ? null : Number(q), parts: $('e-parts').value.trim() || null, contact_pref: $('e-pref').value || null
       }).eq('id', s.id);
       if (r.error) return alertIn('e-msg', r.error.message);
       $('e-msg').className = 'msg'; $('e-msg').textContent = 'Saved'; load();
@@ -323,6 +324,9 @@ main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 48px; display: grid
       drawer(s);
     };
   }
+  function prefSelect(id, v) {
+    return '<select id="' + id + '">' + ['', 'Call', 'Text', 'Email'].map(function (p) { return '<option value="' + p + '"' + (p === (v || '') ? ' selected' : '') + '>' + (p || 'Not set') + '</option>'; }).join('') + '</select>';
+  }
   function alertIn(id, m) { var el = $(id); if (el) { el.className = 'msg err'; el.textContent = m; } }
 
   // ── New service ──
@@ -330,7 +334,7 @@ main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 48px; display: grid
     $('layer').innerHTML = '<div class="scrim" data-close></div><form class="modal" id="nf" aria-label="New service"><h2>New service</h2>' +
       '<div class="two"><label class="field"><span class="lbl">Customer name</span><input id="n-name" required maxlength="120"></label><label class="field"><span class="lbl">Phone</span><input id="n-phone" type="tel" maxlength="40"></label></div>' +
       '<div class="two"><label class="field"><span class="lbl">Email</span><input id="n-email" type="email" maxlength="200"></label><label class="field"><span class="lbl">Came in by</span><select id="n-src">' + SOURCES.filter(function (x) { return x !== 'Website'; }).map(function (x) { return '<option>' + x + '</option>'; }).join('') + '</select></label></div>' +
-      '<label class="field"><span class="lbl">Service type</span><select id="n-type">' + TYPES.map(function (t) { return '<option>' + t + '</option>'; }).join('') + '</select></label>' +
+      '<div class="two"><label class="field"><span class="lbl">Service type</span><select id="n-type">' + TYPES.map(function (t) { return '<option>' + t + '</option>'; }).join('') + '</select></label><label class="field"><span class="lbl">Preferred contact</span>' + prefSelect('n-pref', null) + '</label></div>' +
       '<div class="two"><label class="field"><span class="lbl">Device</span><input id="n-device" placeholder="e.g. HP laptop" maxlength="200"></label><label class="field"><span class="lbl">Quote ($, labor)</span><input id="n-quote" type="number" min="0" step="0.01"></label></div>' +
       '<label class="field"><span class="lbl">What\'s going on</span><textarea id="n-issue" rows="3" maxlength="4000"></textarea></label>' +
       '<label class="check"><input type="checkbox" id="n-notify" checked disabled> <span>Email the customer a confirmation <small id="n-notify-hint">(add an email address first)</small></span></label>' +
@@ -348,7 +352,7 @@ main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 48px; display: grid
       var r = await db.from('services').insert({
         name: $('n-name').value.trim(), phone: $('n-phone').value.trim() || null, email: $('n-email').value.trim() || null,
         source: $('n-src').value, service_type: $('n-type').value, device: $('n-device').value.trim() || null,
-        issue: $('n-issue').value.trim() || null, quote: q === '' ? null : Number(q), notify: notify
+        issue: $('n-issue').value.trim() || null, quote: q === '' ? null : Number(q), notify: notify, contact_pref: $('n-pref').value || null
       }).select().single();
       $('n-btn').disabled = false;
       if (r.error) return alertIn('n-msg', r.error.message);

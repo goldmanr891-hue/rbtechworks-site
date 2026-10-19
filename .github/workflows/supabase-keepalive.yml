@@ -1,0 +1,20 @@
+# Free Supabase projects pause after ~7 days without activity, which silently
+# stops website requests reaching the dashboard. Ping the API every 2 days.
+# A failed run (project paused or down) makes GitHub email the repo owner.
+name: Supabase keep-alive
+on:
+  schedule:
+    - cron: '17 13 */2 * *'
+  workflow_dispatch:
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Supabase REST API
+        run: |
+          code=$(curl -s -o /dev/null -w '%{http_code}' \
+            "https://izuvozkjhxthwmxhkalr.supabase.co/rest/v1/services?select=id&limit=1" \
+            -H "apikey: sb_publishable_n-aSt2l0f0JRrnORpoSRew_sKz57J1p")
+          echo "Supabase responded HTTP $code"
+          # 401/403 is expected (the public key can't read services); 5xx or no response means paused/down.
+          [ "$code" != "000" ] && [ "$code" -lt 500 ]

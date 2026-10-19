@@ -21,6 +21,7 @@ create table if not exists public.services (
   notify        boolean not null default false  -- owner-created services: send the confirmation email
 );
 alter table public.services add column if not exists notify boolean not null default false;
+alter table public.services add column if not exists contact_pref text check (contact_pref in ('Call','Text','Email'));
 
 create table if not exists public.service_events (
   id          bigint generated always as identity primary key,
@@ -38,7 +39,7 @@ alter table public.service_events enable row level security;
 -- ── Privileges (new tables are not exposed automatically in this project) ──
 -- Website visitors (anon) may only INSERT a new request, limited to these columns.
 revoke all on public.services, public.service_events from anon, authenticated;
-grant insert (name, phone, email, service_type, device, issue) on public.services to anon;
+grant insert (name, phone, email, service_type, device, issue, contact_pref) on public.services to anon;
 -- The signed-in owner (authenticated) manages everything.
 grant select, insert, update, delete on public.services, public.service_events to authenticated;
 -- The confirmation-email edge function reads and logs with the service role.
