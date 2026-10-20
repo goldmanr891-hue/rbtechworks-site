@@ -92,6 +92,12 @@ main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 48px; display: grid
 .contact { display: flex; flex-wrap: wrap; gap: 8px; }
 .contact .pref-tag { color: var(--copper-hi); border: 1px solid var(--copper-hi); border-radius: 8px; padding: 6px 10px; font-size: .88rem; font-weight: 600; }
 .contact a { color: var(--green-hi); text-decoration: none; border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; font-size: .88rem; }
+.media { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0; }
+.media .none { color: var(--muted); font-size: .88rem; }
+.thumb { position: relative; display: block; width: 84px; height: 84px; border-radius: 8px; overflow: hidden; border: 1px solid var(--line); background: #000; }
+.thumb img, .thumb video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.thumb span { position: absolute; inset: 0; display: grid; place-items: center; color: #fff; font-size: 1.3rem; text-shadow: 0 1px 4px #000; }
+.upl { cursor: pointer; }
 .log { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; font-size: .88rem; }
 .log li { border-left: 2px solid var(--line); padding-left: 10px; overflow-wrap: anywhere; }
 .log li.status { border-color: var(--green-hi); } .log li.email { border-color: var(--blue); }
@@ -171,6 +177,7 @@ main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 48px; display: grid
   ];
   var SOURCES = ['Call', 'Text', 'Walk-in', 'Email', 'Facebook', 'Website'];
   var TYPES = ['Home computer or phone repair', 'Custom PC build', 'Business IT project', 'AI automation', 'Other'];
+  var MEDIA = 'service-media', MEDIA_MAX = 50 * 1024 * 1024; // private bucket, see supabase/service-media.sql
   var services = [], filter = 'Open', query = '', openId = null;
   var $ = function (id) { return document.getElementById(id); };
   var colorOf = function (s) { var x = STATUSES.find(function (y) { return y.k === s; }); return x ? x.c : 'var(--muted)'; };
@@ -294,6 +301,8 @@ main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 48px; display: grid
       '<label class="field"><span class="lbl">Problem / request</span><textarea id="e-issue" rows="3" maxlength="4000">' + esc(s.issue) + '</textarea></label>' +
       '<div class="two"><label class="field"><span class="lbl">Quote ($, labor)</span><input id="e-quote" type="number" min="0" step="0.01" value="' + (s.quote == null ? '' : s.quote) + '"></label><label class="field"><span class="lbl">Parts</span><input id="e-parts" value="' + esc(s.parts) + '" maxlength="500" placeholder="e.g. screen $110"></label></div>' +
       '<div class="actions"><span class="msg" id="e-msg" role="status"></span><button class="btn ghost">Save details</button></div></form>' +
+      '<div><span class="lbl">Photos &amp; video</span><div class="media" id="media"><span class="none">Loading…</span></div>' +
+      '<div class="actions"><span class="msg" id="m-msg" role="status"></span><label class="btn ghost upl">Add photos or video<input type="file" id="m-file" accept="image/*,video/*" multiple hidden></label></div></div>' +
       '<label class="field"><span class="lbl">Add a note</span><textarea id="note" rows="3" maxlength="4000" placeholder="Called customer, approved $80 + parts…"></textarea></label>' +
       '<div class="actions"><button class="btn ghost" id="add-note">Add note</button></div>' +
       '<div><span class="lbl">History</span><ul class="log">' + log.map(function (l) { return '<li class="' + l.kind + '"><time>' + when(l.created_at) + '</time>' + esc(l.message) + '</li>'; }).join('') + '</ul></div>' +
@@ -317,12 +326,44 @@ main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 48px; display: grid
       if (r.error) return alertIn('e-msg', r.error.message);
       $('e-msg').className = 'msg'; $('e-msg').textContent = 'Saved'; load();
     };
+    loadMedia(s.id);
+    // Drop-off / pickup evidence. Files can be added here but not deleted (delete only in Supabase).
+    $('m-file').onchange = async function () {
+      var files = Array.prototype.slice.call(this.files), added = 0, msg = $('m-msg');
+      msg.className = 'msg'; msg.textContent = 'Uploading…';
+      for (var i = 0; i < files.length; i++) {
+        var f = files[i];
+        if (f.size > MEDIA_MAX) { alertIn('m-msg', f.name + ' is over 50 MB. Record video at 1080p, or trim it.'); continue; }
+        var path = s.id + '/' + Date.now() + '-' + f.name.replace(/[^\w.-]+/g, '_');
+        var up = await db.storage.from(MEDIA).upload(path, f, { contentType: f.type });
+        if (up.error) { alertIn('m-msg', up.error.message); continue; }
+        added++;
+      }
+      if (added) {
+        await db.from('service_events').insert({ service_id: s.id, kind: 'note', message: 'Added ' + added + ' photo/video file' + (added > 1 ? 's' : '') + '.' });
+        drawer(services.find(function (x) { return x.id === s.id; }) || s);
+      }
+    };
     $('add-note').onclick = async function () {
       var v = $('note').value.trim(); if (!v) return;
       var r = await db.from('service_events').insert({ service_id: s.id, kind: 'note', message: v });
       if (r.error) return alertIn('e-msg', r.error.message);
       drawer(s);
     };
+  }
+  async function loadMedia(id) {
+    var r = await db.storage.from(MEDIA).list(String(id), { limit: 100, sortBy: { column: 'name', order: 'asc' } });
+    var box = $('media'); if (!box || openId !== id) return;
+    if (r.error) { box.innerHTML = '<span class="none">Couldn\'t load files: ' + esc(r.error.message) + '</span>'; return; }
+    var paths = (r.data || []).filter(function (f) { return f.id; }).map(function (f) { return id + '/' + f.name; });
+    if (!paths.length) { box.innerHTML = '<span class="none">No photos yet. Add drop-off photos or a short video walkaround.</span>'; return; }
+    var u = await db.storage.from(MEDIA).createSignedUrls(paths, 3600);
+    if (!$('media') || openId !== id) return;
+    $('media').innerHTML = (u.data || []).map(function (x, i) {
+      var url = esc(x.signedUrl), vid = /\.(mp4|mov|m4v|webm|3gp)$/i.test(paths[i]);
+      return '<a class="thumb" href="' + url + '" target="_blank" rel="noopener" title="' + esc(paths[i].split('/')[1]) + '">' +
+        (vid ? '<video src="' + url + '#t=0.1" muted preload="metadata"></video><span>▶</span>' : '<img src="' + url + '" alt="" loading="lazy">') + '</a>';
+    }).join('');
   }
   function prefSelect(id, v) {
     return '<select id="' + id + '">' + ['', 'Call', 'Text', 'Email'].map(function (p) { return '<option value="' + p + '"' + (p === (v || '') ? ' selected' : '') + '>' + (p || 'Not set') + '</option>'; }).join('') + '</select>';
