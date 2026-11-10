@@ -301,7 +301,7 @@ footer .mark svg { width: 24px; height: 24px; }
         <h1>Fixed right. <em>Priced up front.</em></h1>
         <p class="lead">Computer and phone repairs, custom PCs built to order, and dependable IT support for small businesses. Most everyday jobs have a flat price, so there are no surprises.</p>
         <div class="cta-row">
-          <a class="btn primary" href="#contact">Book a diagnostic <span class="arr" aria-hidden="true">→</span></a>
+          <a class="btn primary" href="#contact">Book an appointment <span class="arr" aria-hidden="true">→</span></a>
         </div>
       </div>
 
@@ -365,7 +365,7 @@ footer .mark svg { width: 24px; height: 24px; }
     <div class="wrap">
       <aside class="ticket" aria-label="How a repair works">
         <ol>
-          <li><span class="k">01</span><span><b>$50 diagnostic</b>, waived if you approve the repair</span></li>
+          <li><span class="k">01</span><span><b>$35 booking deposit</b>, applied to your repair</span></li>
           <li><span class="k">02</span><span>Most repairs done in 2–4 business days</span></li>
           <li><span class="k">03</span><span>30-day labor warranty on every job</span></li>
         </ol>
@@ -491,6 +491,7 @@ footer .mark svg { width: 24px; height: 24px; }
         <div><span class="sec-num">04 / Terms</span><h2>The fine print</h2></div>
       </div>
       <div class="terms">
+        <div><h3>Booking deposit</h3><p>A $35 non-refundable deposit books your appointment and is applied to your repair. If you decline the repair after we diagnose it, the deposit covers the diagnostic.</p></div>
         <div><h3>Turnaround</h3><p>Repairs take 2–4 business days. Builds take 2–5 business days after parts arrive, depending on the build. Rush service can be requested for an additional cost.</p></div>
         <div><h3>Warranty</h3><p>30 days on labor: if the same problem comes back within 30 days because of our work, we fix it free. Parts carry the manufacturer's warranty.</p></div>
         <div><h3>Your data</h3><p>We handle your files with care, but keeping a backup is your responsibility. We can back up your data before service. Backups are deleted 30 days after pickup.</p></div>
@@ -518,8 +519,8 @@ footer .mark svg { width: 24px; height: 24px; }
       <div class="contact">
         <div class="contact-side">
           <div class="sec-head">
-            <div><span class="sec-num">06 / Contact</span><h2>Book a diagnostic</h2></div>
-            <p>Send the form, or call, text or email with the device and what it's doing. You'll get a quote before any work starts.</p>
+            <div><span class="sec-num">06 / Contact</span><h2>Book an appointment</h2></div>
+            <p>Send the form, or call, text or email with the device and what it's doing. We'll confirm a time and send a $35 non-refundable deposit link. It goes toward your repair, and you'll get a quote before any work starts.</p>
           </div>
           <div class="contact-card">
             <div class="row"><span class="name">Location</span><span class="price">Holly, MI</span></div>
@@ -614,7 +615,7 @@ footer .mark svg { width: 24px; height: 24px; }
     fetch('https://api.web3forms.com/submit', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(data) })
       .then(function (r) { return r.json(); })
       .then(function (j) {
-        if (j.success) { form.reset(); syncPhone(); say('Thanks! Your request was sent. Expect a reply within one business day.', 'ok'); }
+        if (j.success) { form.reset(); syncPhone(); say('Thanks! Your request was sent. We\'ll reply within one business day to confirm a time and send your $35 deposit link.', 'ok'); }
         else { say('That didn\'t go through. Please try again, or call, text or email instead.', 'err'); }
       })
       .catch(function () { say('That didn\'t go through. Please check your connection, or call, text or email instead.', 'err'); })
